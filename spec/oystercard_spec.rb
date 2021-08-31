@@ -2,6 +2,8 @@ require 'oystercard'
 
 describe OysterCard do
     let(:oystercard) { OysterCard.new }
+    let(:station) { double :station }
+
     it 'get my balance' do
         expect(oystercard.balance).to eq 0
     end
@@ -16,30 +18,37 @@ describe OysterCard do
       expect { oystercard.add_funds(1) }.to raise_error "Card balance cannot exceed #{OysterCard::LIMIT}"
     end
 
-    it 'deducts funds from card' do
-        oystercard.add_funds(10)
-        oystercard.deducts(10)
-        expect(oystercard.balance).to eq 0
-    end
-
     it 'is initially not in a journey' do
-      expect(subject.in_journey).to eq false
+      # expect(subject.in_journey).to eq false
+      expect(subject).not_to be_in_journey
     end
 
     it 'can touch in' do
         subject.add_funds(10)
-        subject.touch_in
-        expect(subject.in_journey).to eq true
+        subject.touch_in(station)
+        expect(subject).to be_in_journey
     end
 
     it 'can touch out' do
         subject.add_funds(10)
-        subject.touch_in
+        subject.touch_in(station)
         subject.touch_out
-        expect(subject.in_journey).to eq false
+        expect(subject).not_to be_in_journey
     end
 
     it 'checks the balance before #touch_in' do        
-        expect { subject.touch_in }.to raise_error "Balance must be greater than 1"
+        expect { subject.touch_in(station) }.to raise_error "Balance must be greater than 1"
     end
+
+    it '#touch_out deducts money from card' do
+        subject.add_funds(10)
+        expect { subject.touch_out }.to change{ subject.balance }.by(-OysterCard::MINIMUM_CHARGE)
+    end
+
+    it 'records the departing station' do
+        subject.add_funds(10)
+        subject.touch_in(station)
+        expect(subject.stations).to eq station
+    end
+    
 end
