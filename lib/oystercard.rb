@@ -22,7 +22,14 @@ class OysterCard
     # end
 
     def touch_in
-      @in_journey = true
+        raise "Balance must be greater than 1" if balance < 1
+        @in_journey = true
     end
+
+    def touch_out
+      @in_journey = false
+    end
+
+    #def check_balance
 
 end
