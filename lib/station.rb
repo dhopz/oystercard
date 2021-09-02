@@ -1,7 +1,7 @@
 station.rb
 class Station
 
-    def departing_station
+    def station_name
         puts "this is a new station"
     end
 
