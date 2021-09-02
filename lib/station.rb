@@ -1,8 +1,10 @@
-station.rb
 class Station
 
-    def station_name
-        puts "this is a new station"
+    attr_reader :name, :zone
+
+    def initialize(params)
+        @name = params[:name]
+        @zone = params[:zone]        
     end
 
 end
